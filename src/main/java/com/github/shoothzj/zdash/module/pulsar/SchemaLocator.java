@@ -22,14 +22,16 @@ package com.github.shoothzj.zdash.module.pulsar;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
-public class PutManagedLedgerTopicReq {
+public class SchemaLocator {
 
-    private String path;
+    private IndexEntry info;
 
-    private ManagedLedgerTopicReq managedLedgerTopicReq;
+    private List<IndexEntry> index;
 
-    public PutManagedLedgerTopicReq() {
+    public SchemaLocator() {
     }
 }

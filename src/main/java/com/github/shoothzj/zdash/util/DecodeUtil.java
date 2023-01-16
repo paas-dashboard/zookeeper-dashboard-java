@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -23,6 +23,7 @@ import com.github.shoothzj.zdash.module.DecodeComponent;
 import com.github.shoothzj.zdash.module.DecodeNamespace;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.bookkeeper.mledger.proto.MLDataFormats;
+import org.apache.pulsar.broker.service.schema.SchemaStorageFormat;
 
 import java.nio.charset.StandardCharsets;
 
@@ -42,22 +43,29 @@ public class DecodeUtil {
         DecodeNamespace decodeNamespace = DecodeNamespace.valueOf(namespace);
         switch (decodeNamespace) {
             case ManagedLedgerTopic:
-                return decodePulsarManagedLedgerTopicData(data);
+                return decodePulsarManagedLedgerTopicData(data).toString();
             case ManagedLedgerSubscription:
-                return decodePulsarManagedLedgerSubscriptionData(data);
+                return decodePulsarManagedLedgerSubscriptionData(data).toString();
+            case SchemaLocator:
+                return decodePulsarSchemaLocator(data).toString();
             default:
                 return new String(data, StandardCharsets.UTF_8);
         }
     }
 
-    public static String decodePulsarManagedLedgerTopicData(byte[] data) throws InvalidProtocolBufferException {
-        MLDataFormats.ManagedLedgerInfo managedLedgerInfo = MLDataFormats.ManagedLedgerInfo.parseFrom(data);
-        return managedLedgerInfo.toString();
+    public static MLDataFormats.ManagedLedgerInfo decodePulsarManagedLedgerTopicData(byte[] data)
+            throws InvalidProtocolBufferException {
+        return MLDataFormats.ManagedLedgerInfo.parseFrom(data);
     }
 
-    public static String decodePulsarManagedLedgerSubscriptionData(byte[] data) throws InvalidProtocolBufferException {
-        MLDataFormats.ManagedCursorInfo managedCursorInfo = MLDataFormats.ManagedCursorInfo.parseFrom(data);
-        return managedCursorInfo.toString();
+    public static MLDataFormats.ManagedCursorInfo decodePulsarManagedLedgerSubscriptionData(byte[] data)
+            throws InvalidProtocolBufferException {
+        return MLDataFormats.ManagedCursorInfo.parseFrom(data);
+    }
+
+    public static SchemaStorageFormat.SchemaLocator decodePulsarSchemaLocator(byte[] data)
+            throws InvalidProtocolBufferException {
+        return SchemaStorageFormat.SchemaLocator.parseFrom(data);
     }
 
 }

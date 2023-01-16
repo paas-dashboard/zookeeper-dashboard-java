@@ -24,12 +24,12 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class PutManagedLedgerTopicReq {
+public class IndexEntry {
 
-    private String path;
+    private long version;
 
-    private ManagedLedgerTopicReq managedLedgerTopicReq;
+    private PositionInfo position;
 
-    public PutManagedLedgerTopicReq() {
+    public IndexEntry() {
     }
 }

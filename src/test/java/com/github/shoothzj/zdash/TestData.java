@@ -17,19 +17,14 @@
  * under the License.
  */
 
-package com.github.shoothzj.zdash.module.pulsar;
+package com.github.shoothzj.zdash;
 
-import lombok.Getter;
-import lombok.Setter;
+public class TestData {
 
-@Setter
-@Getter
-public class PutManagedLedgerTopicReq {
+    public static final String EXAMPLE_PULSAR_MANAGED_TOPIC = "0a0508da012000";
 
-    private String path;
+    public static final String EXAMPLE_PULSAR_MANAGED_LEDGER_SUBSCRIPTION = "08db0110da0118eeeeeeeeeeeeeeeeee0130e09cdd-3bd30";
 
-    private ManagedLedgerTopicReq managedLedgerTopicReq;
+    public static final String EXAMPLE_PULSAR_SCHEMA_LOCATOR = "0a2b0800120508a91410001a20e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855122b0800120508a91410001a20e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
-    public PutManagedLedgerTopicReq() {
-    }
 }

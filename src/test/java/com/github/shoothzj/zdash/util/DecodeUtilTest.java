@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -19,6 +19,7 @@
 
 package com.github.shoothzj.zdash.util;
 
+import com.github.shoothzj.zdash.TestData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -27,15 +28,22 @@ class DecodeUtilTest {
 
     @Test
     public void testDecodePulsarManagedLedgerTopic() throws Exception {
-        byte[] data = HexUtil.hexToByteArray("0a0508da012000");
+        byte[] data = HexUtil.hexToByteArray(TestData.EXAMPLE_PULSAR_MANAGED_TOPIC);
         String content = DecodeUtil.decodeData(data, "Pulsar", "ManagedLedgerTopic");
         log.info("content is\n{}", content);
     }
 
     @Test
     public void testDecodePulsarManagedLedgerSubscription() throws Exception {
-        byte[] data = HexUtil.hexToByteArray("08db0110da0118eeeeeeeeeeeeeeeeee0130e09cdd-3bd30");
+        byte[] data = HexUtil.hexToByteArray(TestData.EXAMPLE_PULSAR_MANAGED_LEDGER_SUBSCRIPTION);
         String content = DecodeUtil.decodeData(data, "Pulsar", "ManagedLedgerSubscription");
+        log.info("content is\n{}", content);
+    }
+
+    @Test
+    public void testDecodePulsarSchemaLocator() throws Exception {
+        byte[] data = HexUtil.hexToByteArray(TestData.EXAMPLE_PULSAR_SCHEMA_LOCATOR);
+        String content = DecodeUtil.decodeData(data, "Pulsar", "SchemaLocator");
         log.info("content is\n{}", content);
     }
 

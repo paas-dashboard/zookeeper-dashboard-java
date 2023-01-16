@@ -34,4 +34,6 @@
 
     <!-- we don't need package-info on tests -->
     <suppress checks="JavadocPackage" files=".*[\\/]src[\\/]test[\\/].*"/>
+
+    <suppress checks="LineLength" files=".*[\\/]src[\\/]test[\\/].*/TestData.java"/>
 </suppressions>

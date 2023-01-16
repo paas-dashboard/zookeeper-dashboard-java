@@ -16,20 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+syntax = "proto2";
 
-package com.github.shoothzj.zdash.module.pulsar;
+package pulsar.schema;
+option java_package = "org.apache.pulsar.broker.service.schema";
+option optimize_for = SPEED;
 
-import lombok.Getter;
-import lombok.Setter;
+message PositionInfo {
+    required int64 ledgerId = 1;
+    required int64 entryId = 2;
+}
 
-@Setter
-@Getter
-public class PutManagedLedgerTopicReq {
+message IndexEntry {
+    required int64 version = 1;
+    required PositionInfo position = 2;
+    required bytes hash = 3;
+}
 
-    private String path;
+message SchemaEntry {
+    required bytes schema_data = 2;
+    repeated IndexEntry index = 5;
+}
 
-    private ManagedLedgerTopicReq managedLedgerTopicReq;
-
-    public PutManagedLedgerTopicReq() {
-    }
+message SchemaLocator {
+    required IndexEntry info = 1;
+    repeated IndexEntry index = 2;
 }

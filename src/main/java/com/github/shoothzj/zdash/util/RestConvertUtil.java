@@ -20,8 +20,11 @@
 package com.github.shoothzj.zdash.util;
 
 import com.github.shoothzj.zdash.module.pulsar.IndexEntry;
+import com.github.shoothzj.zdash.module.pulsar.ManagedCursorInfo;
+import com.github.shoothzj.zdash.module.pulsar.ManagedLedgerInfo;
 import com.github.shoothzj.zdash.module.pulsar.PositionInfo;
 import com.github.shoothzj.zdash.module.pulsar.SchemaLocator;
+import org.apache.bookkeeper.mledger.proto.MLDataFormats;
 import org.apache.pulsar.broker.service.schema.SchemaStorageFormat;
 
 import java.util.ArrayList;
@@ -57,4 +60,17 @@ public class RestConvertUtil {
         return result;
     }
 
+    public static ManagedLedgerInfo convert(MLDataFormats.ManagedLedgerInfo managedLedgerInfo) {
+        ManagedLedgerInfo res = new ManagedLedgerInfo();
+        res.setLedgers(managedLedgerInfo.getLedgerInfoList());
+        return res;
+    }
+
+    public static ManagedCursorInfo convert(MLDataFormats.ManagedCursorInfo cursor) {
+        ManagedCursorInfo res = new ManagedCursorInfo();
+        res.setCursorsLedgerId(cursor.getCursorsLedgerId());
+        res.setMarkDeleteLedgerId(cursor.getMarkDeleteLedgerId());
+        res.setMarkDeleteEntryId(cursor.getMarkDeleteEntryId());
+        return res;
+    }
 }

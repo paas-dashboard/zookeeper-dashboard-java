@@ -21,11 +21,14 @@ package com.github.shoothzj.zdash.controller;
 
 import com.github.shoothzj.zdash.module.GetNodeReq;
 import com.github.shoothzj.zdash.module.GetNodeResp;
+import com.github.shoothzj.zdash.module.pulsar.ManagedCursorInfo;
+import com.github.shoothzj.zdash.module.pulsar.ManagedLedgerInfo;
 import com.github.shoothzj.zdash.module.pulsar.SchemaLocator;
 import com.github.shoothzj.zdash.service.ZkService;
 import com.github.shoothzj.zdash.util.DecodeUtil;
 import com.github.shoothzj.zdash.util.RestConvertUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.bookkeeper.mledger.proto.MLDataFormats;
 import org.apache.pulsar.broker.service.schema.SchemaStorageFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,15 +66,27 @@ public class ZnodeDecodeContentController {
     }
 
     @PostMapping("/get-node-decode-pulsar-schema-locator")
-    public ResponseEntity<SchemaLocator> decodePulsarSchemaLocator(@RequestBody GetNodeReq req) {
+    public ResponseEntity<SchemaLocator> decodePulsarSchemaLocator(@RequestBody GetNodeReq req) throws Exception{
         log.info("decode node path [{}]", req.getPath());
-        try {
-            byte[] data = zkService.getZnodeContent(req.getPath());
-            SchemaStorageFormat.SchemaLocator schemaLocator = DecodeUtil.decodePulsarSchemaLocator(data);
-            return new ResponseEntity<>(RestConvertUtil.convert(schemaLocator), HttpStatus.OK);
-        } catch (Exception e) {
-            log.error("get node fail. err: ", e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        byte[] data = zkService.getZnodeContent(req.getPath());
+        SchemaStorageFormat.SchemaLocator schemaLocator = DecodeUtil.decodePulsarSchemaLocator(data);
+        return new ResponseEntity<>(RestConvertUtil.convert(schemaLocator), HttpStatus.OK);
+    }
+
+    @PostMapping("/get-node-decode-pulsar-managed-ledger")
+    public ResponseEntity<ManagedLedgerInfo> decodeManagedLedgerTopic(@RequestBody GetNodeReq req) throws Exception{
+        log.info("decode node path [{}]", req.getPath());
+        byte[] data = zkService.getZnodeContent(req.getPath());
+        MLDataFormats.ManagedLedgerInfo managedLedgerInfo = DecodeUtil.decodePulsarManagedLedgerTopicData(data);
+        return new ResponseEntity<>(RestConvertUtil.convert(managedLedgerInfo), HttpStatus.OK);
+    }
+
+    @PostMapping("/get-node-decode-pulsar-managed-cursor")
+    public ResponseEntity<ManagedCursorInfo> decodeManagedLedgerSubscription(@RequestBody GetNodeReq req)
+            throws Exception{
+        log.info("decode node path [{}]", req.getPath());
+        byte[] data = zkService.getZnodeContent(req.getPath());
+        MLDataFormats.ManagedCursorInfo cursor = DecodeUtil.decodePulsarManagedLedgerSubscriptionData(data);
+        return new ResponseEntity<>(RestConvertUtil.convert(cursor), HttpStatus.OK);
     }
 }

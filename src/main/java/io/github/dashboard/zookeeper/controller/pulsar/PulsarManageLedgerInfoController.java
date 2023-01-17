@@ -68,8 +68,8 @@ public class PulsarManageLedgerInfoController {
             (MLDataFormats.ManagedLedgerInfo managedLedgerInfo, long targetLedgerId) {
         List<MLDataFormats.ManagedLedgerInfo.LedgerInfo> ledgers = managedLedgerInfo.getLedgerInfoList();
         Iterator<MLDataFormats.ManagedLedgerInfo.LedgerInfo> iterator = ledgers.iterator();
-        while (iterator.hasNext()){
-            if(iterator.next().getLedgerId() == targetLedgerId){
+        while (iterator.hasNext()) {
+            if (iterator.next().getLedgerId() == targetLedgerId) {
                 iterator.remove();
                 break;
             }

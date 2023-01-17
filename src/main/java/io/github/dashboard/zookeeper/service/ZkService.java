@@ -21,6 +21,7 @@ package io.github.dashboard.zookeeper.service;
 
 import io.github.dashboard.zookeeper.config.ZooKeeperConfig;
 import io.github.dashboard.zookeeper.module.DeleteNodeReq;
+import io.github.dashboard.zookeeper.module.UpdateInf;
 import io.github.dashboard.zookeeper.module.pulsar.TopicStats;
 import io.github.dashboard.zookeeper.util.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +66,23 @@ public class ZkService {
             } else {
                 zooKeeper.setData(path, content, -1);
             }
+        }
+    }
+
+    public void updateZnodeContentCas(String path, UpdateInf<byte[]> updateInf) {
+        try (ZooKeeper zooKeeper = new ZooKeeper(config.addr, config.sessionTimeoutMs, null)) {
+            Stat stat = zooKeeper.exists(path, false);
+            if (stat == null) {
+                throw new RuntimeException("path not exists");
+            }
+            byte[] oldContent = zooKeeper.getData(path, false, stat);
+            byte[] newContent = updateInf.update(oldContent);
+            if (newContent == null) {
+                return;
+            }
+            zooKeeper.setData(path, newContent, stat.getVersion());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -68,4 +68,14 @@ public class DecodeUtil {
         return SchemaStorageFormat.SchemaLocator.parseFrom(data);
     }
 
+    public static MLDataFormats.ManagedCursorInfo decodePulsarManagedCursor(byte[] data)
+            throws InvalidProtocolBufferException {
+        return MLDataFormats.ManagedCursorInfo.parseFrom(data);
+    }
+
+    public static MLDataFormats.ManagedLedgerInfo decodePulsarMangedLedger(byte[] data)
+            throws InvalidProtocolBufferException {
+        return MLDataFormats.ManagedLedgerInfo.parseFrom(data);
+    }
+
 }

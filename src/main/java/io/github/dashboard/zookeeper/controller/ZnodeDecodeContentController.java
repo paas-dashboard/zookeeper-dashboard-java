@@ -21,10 +21,13 @@ package io.github.dashboard.zookeeper.controller;
 
 import io.github.dashboard.zookeeper.module.GetNodeReq;
 import io.github.dashboard.zookeeper.module.GetNodeResp;
+import io.github.dashboard.zookeeper.module.pulsar.ManagedCursor;
+import io.github.dashboard.zookeeper.module.pulsar.ManagedLedger;
 import io.github.dashboard.zookeeper.module.pulsar.SchemaLocator;
 import io.github.dashboard.zookeeper.service.ZkService;
 import io.github.dashboard.zookeeper.util.DecodeUtil;
 import io.github.dashboard.zookeeper.util.RestConvertUtil;
+import io.github.protocol.pulsar.codec.mledger.MLDataFormats;
 import io.github.protocol.pulsar.codec.schema.SchemaStorageFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,5 +67,23 @@ public class ZnodeDecodeContentController {
         byte[] data = zkService.getZnodeContent(req.getPath());
         SchemaStorageFormat.SchemaLocator schemaLocator = DecodeUtil.decodePulsarSchemaLocator(data);
         return new ResponseEntity<>(RestConvertUtil.convert(schemaLocator), HttpStatus.OK);
+    }
+
+    @PostMapping("/get-node-decode-pulsar-managed-ledger")
+    public ResponseEntity<ManagedLedger> decodePulsarManagedLedger(@RequestBody GetNodeReq req)
+            throws Exception {
+        log.info("decode node path [{}]", req.getPath());
+        byte[] data = zkService.getZnodeContent(req.getPath());
+        MLDataFormats.ManagedLedgerInfo managedLedgerInfo = DecodeUtil.decodePulsarMangedLedger(data);
+        return new ResponseEntity<>(RestConvertUtil.convert(managedLedgerInfo), HttpStatus.OK);
+    }
+
+    @PostMapping("/get-node-decode-pulsar-managed-cursor")
+    public ResponseEntity<ManagedCursor> decodePulsarManagedCursor(@RequestBody GetNodeReq req)
+            throws Exception {
+        log.info("decode node path [{}]", req.getPath());
+        byte[] data = zkService.getZnodeContent(req.getPath());
+        MLDataFormats.ManagedCursorInfo cursor = DecodeUtil.decodePulsarManagedCursor(data);
+        return new ResponseEntity<>(RestConvertUtil.convert(cursor), HttpStatus.OK);
     }
 }

@@ -33,13 +33,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/zookeeper/pulsar/manage-ledger-info")
-
 public class PulsarManageLedgerInfoController {
 
     @Autowired
@@ -54,11 +54,10 @@ public class PulsarManageLedgerInfoController {
                 try {
                     MLDataFormats.ManagedLedgerInfo managedLedgerInfo =
                             MLDataFormats.ManagedLedgerInfo.parseFrom(bytes);
-                    cloneAndDeleteIndividualLedger(managedLedgerInfo, req.getLedgerId());
+                    return cloneAndDeleteIndividualLedger(managedLedgerInfo, req.getLedgerId()).toByteArray();
                 } catch (InvalidProtocolBufferException e) {
                     throw new RuntimeException(e);
                 }
-                return new byte[0];
             }
         });
         return new ResponseEntity<>(HttpStatus.OK);
@@ -66,7 +65,7 @@ public class PulsarManageLedgerInfoController {
 
     public static MLDataFormats.ManagedLedgerInfo cloneAndDeleteIndividualLedger
             (MLDataFormats.ManagedLedgerInfo managedLedgerInfo, long targetLedgerId) {
-        List<MLDataFormats.ManagedLedgerInfo.LedgerInfo> ledgers = managedLedgerInfo.getLedgerInfoList();
+        List<MLDataFormats.ManagedLedgerInfo.LedgerInfo> ledgers = new ArrayList<>(managedLedgerInfo.getLedgerInfoList());
         Iterator<MLDataFormats.ManagedLedgerInfo.LedgerInfo> iterator = ledgers.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().getLedgerId() == targetLedgerId) {
@@ -74,11 +73,13 @@ public class PulsarManageLedgerInfoController {
                 break;
             }
         }
-        return MLDataFormats.ManagedLedgerInfo.newBuilder()
+        MLDataFormats.ManagedLedgerInfo.Builder builder = MLDataFormats.ManagedLedgerInfo.newBuilder()
                 .addAllLedgerInfo(ledgers)
-                .addAllProperties(managedLedgerInfo.getPropertiesList())
-                .setTerminatedPosition(managedLedgerInfo.getTerminatedPosition())
-                .build();
+                .addAllProperties(managedLedgerInfo.getPropertiesList());
+        builder.setTerminatedPosition(MLDataFormats.NestedPositionInfo.newBuilder()
+                .setLedgerId(managedLedgerInfo.getTerminatedPosition().getLedgerId())
+                .setEntryId(managedLedgerInfo.getTerminatedPosition().getEntryId()).build());
+        return builder.build();
     }
 
 }
